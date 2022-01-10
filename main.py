@@ -128,37 +128,6 @@ def #sequentie_uit_bestand(sequentie_bestand):
     #            sequentie += index
     #return sequentie
 #
-def #def1(gene_cds_bestand):
-    #bestand = open("gene_+_cds.txt")
-    #aantal = 0
-    #gene_of_cds = True
-    #gene = ""
-    #cds = ""
-    #for regel in bestand:
-    #     regel = regel.replace(" ","")
-    #     if regel.startswith("gene"):
-    #         gene_of_cds = True
-    #     elif regel.startswith("CDS"):
-    #         gene_of_cds = False
-#
-    #     if gene_of_cds == True:
-    #         gene += regel
-    #     elif gene_of_cds == False:
-    #         cds += regel
-#
-    #lijst = gene.split("gene")
-    #lijst_met_gene = []
-    #for i in lijst:
-    #    l = i.split("\n")
-    #    print(l)
-    #    lijst_met_gene.append(l)
-    #    print()
-    #print(lijst_met_gene)
-    #lijst1 = cds.split("CDS",-1)
-    #print(lijst1)
-
-
-
 
 def main():
     #bestandsnaam = "test.txt"
@@ -167,7 +136,6 @@ def main():
     inhoud_gff = informatieinlezen_gff(bestandsnaam_gff)
     gene_cds_bestand, sequentie_bestand = gbff_bestand_opdelen(bestandsnaam_gbff)
     sequentie_genoom = sequentie_uit_bestand(sequentie_bestand)
-    #def1(gene_cds_bestand)
     grafieken(inhoud_gff,sequentie_genoom)
 
 
