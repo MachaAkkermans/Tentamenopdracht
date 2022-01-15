@@ -1,3 +1,10 @@
+FEATURES             Location/Qualifiers
+     source          1..2821361
+                     /organism="Staphylococcus aureus subsp. aureus NCTC 8325"
+                     /mol_type="genomic DNA"
+                     /strain="NCTC 8325"
+                     /sub_species="aureus"
+                     /db_xref="taxon:93061"
      gene            517..1878
                      /gene="dnaA"
                      /locus_tag="SAOUHSC_00001"
@@ -49050,5 +49057,3 @@
                      /db_xref="GeneID:3921318"
                      /translation="MVKRTYQPNKRKHSKVHGFRKRMSTKNGRKVLARRRRKGRKVLS
                      A"
-CONTIG      join(CP000253.1:1..2821361)
-ORIGIN
