@@ -12,6 +12,7 @@ class Gff_bestand():
         self.Bestand_in_lijst()
         self.Lijsten_aanmaken()
 
+        
     def Bestand_in_lijst(self):
         """
         Maakt lijst self.__inhoud_gff aan, waar elke regel van het bestand
@@ -255,6 +256,7 @@ class Gui_maken():
 
         self.GuiStartscherm()
 
+        
     def GuiStartscherm(self):
         """
         Bouwt de GUI en knopjes voor de verschillende commands
