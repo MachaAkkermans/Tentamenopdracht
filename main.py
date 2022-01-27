@@ -9,11 +9,10 @@ class Gff_bestand():
 
     def __init__(self, bestandsnaam):
         self.__bestandsnaam = bestandsnaam
-        self.Bestand_in_lijst()
-        self.Lijsten_aanmaken()
+        self.bestand_in_lijst()
+        self.lijsten_aanmaken()
 
-        
-    def Bestand_in_lijst(self):
+    def bestand_in_lijst(self):
         """
         Maakt lijst self.__inhoud_gff aan, waar elke regel van het bestand
         wordt toegevoegt.
@@ -30,10 +29,10 @@ class Gff_bestand():
             print("bestand niet gevonden!")
             self.__bestandsnaam = input("voer bestand opnieuw in")
             self.__init__(self.__bestandsnaam)
-            self.getLijsten()
+            self.getlijsten()
 
 
-    def Lijsten_aanmaken(self):
+    def lijsten_aanmaken(self):
         """
         Maakt 5 lijsten aan, voor elke soort type die voorkomt.
         """
@@ -43,20 +42,20 @@ class Gff_bestand():
         self.__exon = []
         self.__anders = []
         # stopt elke regel van het bestand in de juiste lijst
-        for lijst in self.__inhoud_gff:
-            if lijst[2] == "gene":
-                self.__gene.append(lijst)
-            elif lijst[2] == "CDS":
-                self.__cds.append(lijst)
-            elif lijst[2] == "tRNA":
-                self.__trna.append(lijst)
-            elif lijst[2] == "exon":
-                self.__exon.append(lijst)
+        for kop in self.__inhoud_gff:
+            if kop[2] == "gene":
+                self.__gene.append(kop)
+            elif kop[2] == "CDS":
+                self.__cds.append(kop)
+            elif kop[2] == "tRNA":
+                self.__trna.append(kop)
+            elif kop[2] == "exon":
+                self.__exon.append(kop)
             else:
-                self.__anders.append(lijst)
+                self.__anders.append(kop)
 
 
-    def getLijsten(self):
+    def getlijsten(self):
         """
 
         :return:
@@ -79,13 +78,13 @@ class Gffb_bestand():
 
     def __init__(self, bestandsnaam):
         self.__bestandsnaam = bestandsnaam
-        self.Bestand_opdelen()
-        self.Informatie_halen_uit_bestand2()
-        self.Dictonaries_aanmaken()
+        self.bestand_opdelen()
+        self.informatie_halen_uit_bestand2()
+        self.dictonaries_aanmaken()
         # self.sequentie_uit_bestand3()
 
 
-    def Bestand_opdelen(self):
+    def bestand_opdelen(self):
         """
         splits het bestand op in 3 bestanden
         # bestand 1 bevat informatie van LOCUS t/m FEATURES
@@ -101,26 +100,29 @@ class Gffb_bestand():
 
             # houdt bij bij welke van de 3 bestanden het de regel moet toevoegen
 
-            bestand1 = True
-            bestand2 = False
-            bestand3 = False
+            bestand_met_locus_tot_features = True
+            bestand_met_informatie = False
+            bestand_met_sequentie = False
             for regel in bestand:
                 if regel.startswith("FEATURES"):  # vanaf hier begint deel 2
                     # dus wordt bestand1 op false gezet en bestand 2 op True
-                    bestand1 = False
-                    bestand2 = True
+                    bestand_met_locus_tot_features = False
+                    bestand_met_informatie = True
                 if regel.startswith("CONTIG"):  # vanaf hier begint deel 3
                     # dus wordt bestand 2 op false gezet en bestand3 op true
-                    bestand2 = False
-                    bestand3 = True
+                    bestand_met_informatie = False
+                    bestand_met_sequentie = True
                 # de code hieronder zorgt dat de regel bij het goede bestand
                 # wordt toegevoegt
-                if bestand1 == True and bestand2 == False:
+                if bestand_met_locus_tot_features == True \
+                        and bestand_met_informatie == False:
                     self.__bestand1_tekst.write(regel)
-                elif bestand1 == False and bestand2 == True \
-                        and bestand3 == False:
+                elif bestand_met_locus_tot_features == False \
+                        and bestand_met_informatie == True \
+                        and bestand_met_sequentie == False:
                     self.__bestand2_informatie.write(regel)
-                elif bestand2 == False and bestand3 == True:
+                elif bestand_met_informatie == False \
+                        and bestand_met_sequentie == True:
                     self.__bestand3_sequentie.write(regel)
 
             self.__bestand1_tekst.close()
@@ -131,21 +133,20 @@ class Gffb_bestand():
             self.__bestandsnaam = input("voer bestand opnieuw in")
             self.__init__(self.__bestandsnaam)
             self.getdiconaries()
-            self.getSequentie()
+            self.getsequentie()
 
 
-    def Spaties_uit_regel(self):
+    def spaties_uit_regel(self):
         """
         voorbeeld van recursie om spaties in regel eruit te halen
         """
         if self.__regel.startswith(" "):
             self.__regel = self.__regel[1:]
-            self.Spaties_uit_regel()
+            self.spaties_uit_regel()
 
 
-    def Informatie_halen_uit_bestand2(self):
+    def informatie_halen_uit_bestand2(self):
         """
-
         :return:
         lijst_met_gene_cds - 2d lijst met inhoudt van bestand gene+cds.txt
         -[["gene 517..1878", /gene="dnaA", ...][CDS 517..1878, /gene="dnaA",..],
@@ -159,7 +160,7 @@ class Gffb_bestand():
         for self.__regel in bestand:
             if self.__regel.startswith(
                     " "):  # Haalt alle spaties weg dat bij het
-                self.Spaties_uit_regel()  # begin van de regel staat
+                self.spaties_uit_regel()  # begin van de regel staat
             self.__regel = self.__regel.replace("\n", "")
             # zorgt ervoor dat elke keer wanneer een nieuw kopje start er een
             # nieuwe lijst wordt aangemaakt en de oude wordt toegevoegt aan de
@@ -188,7 +189,7 @@ class Gffb_bestand():
         # inhoudt
 
 
-    def Dictonaries_aanmaken(self):
+    def dictonaries_aanmaken(self):
         """
         Maakt 3 dictonaries aan, elk voor elk type dat voorkomt in het bestand
         """
@@ -212,7 +213,7 @@ class Gffb_bestand():
                 id_nummer_rrna += 1
 
 
-    def getSequentie(self):
+    def getsequentie(self):
         """
 
         :return: self.__bestand3__sequentie - naam van bestand 3
@@ -247,17 +248,16 @@ class Gui_maken():
         self.__gffb_cds = gffb_cds
         self.__sequentie = sequentie
         self.__gff_gene = gff_gene
-        self.setGegevenstypes()
-        self.setGegevensHypothetical_proteins()
-        self.setTabel()
-        self.setGegevensStrands()
-        self.setGegevens_gc_percentage()
-        self.setLengte()
+        self.setgegevenstypes()
+        self.setgegevens_hypothetical_proteins()
+        self.settabel()
+        self.setgegevens_strands()
+        self.setgegevens_gc_percentage()
+        self.setlengte()
 
-        self.GuiStartscherm()
+        self.guistartscherm()
 
-        
-    def GuiStartscherm(self):
+    def guistartscherm(self):
         """
         Bouwt de GUI en knopjes voor de verschillende commands
         """
@@ -266,31 +266,31 @@ class Gui_maken():
         self.__knop = Tk.Button(heigh=2, master=startscherm,
                                 text="klik hier voor tabel met de "
                                      "gevonden patronen",
-                                command=self.tabelPatronen,
+                                command=self.tabelpatronen,
                                 activeforeground="red")
         self.__knop2 = Tk.Button(heigh=2, master=startscherm,
                                  text="klik hier voor grafiek met "
                                       "verschillende gevonden type ",
-                                 command=self.Grafiek_type,
+                                 command=self.grafiek_type,
                                  activeforeground="red")
         self.__knop3 = Tk.Button(heigh=2, master=startscherm, text=
                                 "klik hier voor grafiek met het aantal "
                                     "hypotheticale proteins ",
                                  command=
-                                 self.grafiekHypotheticalProteins,
+                                 self.grafiek_hypotheticalproteins,
                                  activeforeground="red")
         self.__knop4 = Tk.Button(heigh=2, master=startscherm,
                                  text="klik hier voor grafiek met het "
                                       "verschil +/- strands ",
-                                 command=self.maakGrafiekStrands,
+                                 command=self.maakgrafiekstrands,
                                  activeforeground="red")
         self.__knop5 = Tk.Button(heigh=2, master=startscherm, text=
                                  "klik hier voor grafiek met GC/AT %",
-                                 command=self.maakGrafiekPercentage,
+                                 command=self.maakgrafiekpercentage,
                                  activeforeground="red")
         self.__knop6 = Tk.Button(heigh=2, master=startscherm, text=
                          "klik hier verschillende lengtes van genen",
-                                 command=self.maakGrafiek_lengte,
+                                 command=self.maakgrafiek_lengte,
                                  activeforeground="red")
         quit_button = Tk.Button(heigh=2, width=10, text="quit",
                                 command=startscherm.destroy,
@@ -306,7 +306,7 @@ class Gui_maken():
         Tk.mainloop()
 
 
-    def setGegevenstypes(self):
+    def setgegevenstypes(self):
         """
         Berekent de gegevens voor de grafiek verschillende voorkomende type
         """
@@ -328,7 +328,7 @@ class Gui_maken():
             self.__y.append(value)
 
 
-    def setTabel(self):
+    def settabel(self):
         """
         Maakt een lijst aan met de gegevens wat in de tabel moet komen
         te staan
@@ -343,7 +343,7 @@ class Gui_maken():
             self.__tabel.append(patroon)
 
 
-    def setGegevens_gc_percentage(self):
+    def setgegevens_gc_percentage(self):
         """
         Berekent de gegevens voor de pie chart
         """
@@ -364,7 +364,7 @@ class Gui_maken():
         self.__percentage = [self.__gc, self.__at]
 
 
-    def setGegevensHypothetical_proteins(self):
+    def setgegevens_hypothetical_proteins(self):
         """
         Berekent de aantal hypothetical proteins
         """
@@ -380,7 +380,7 @@ class Gui_maken():
         self.__y = [aantal_wel, aantal_niet]
 
 
-    def setGegevensStrands(self):
+    def setgegevens_strands(self):
         """
         Berekent de gegevens voor de + en - strands
         """
@@ -401,44 +401,60 @@ class Gui_maken():
         self.__grote[1] = (self.__grote[1] / totaal)
 
 
-    def setLengte(self):
+    def setlengte(self):
         """
-         Kijkt hoevaak elk lengte voorkomt en voegt het toe aan een dic.
+         Kijkt hoevaak elk lengte voorkomt in elke categorie.
         """
-        self.__verschillende_lengtes = {}
+        self.__lengtes_y = [0,0,0,0,0,0,0,0]
+        # lijst dat bijhoudt hoevaak elke categorie voorkomt
+        self.__lengtes_x = ["0 t/m 1000","1000 t/m 2000","2000 t/m 3000",
+                            "3000 t/m 4000", "4000 t/m 5000",
+                            "5000 t/m 6000", "6000 t/m 7000",
+                            "7000 t/m 8000"]
+        # gaat elke gene langs, berekent de lengte en telt 1 op bij de
+        # bijpassende categorie
         for gene in self.__gff_gene:
-           lengte = int(gene[4]) - int(gene[3]) # berekent de lengte
-           # voegt alleen unieke lengtes toe of voeg 1 toe aan de waarde
-           if lengte not in self.__verschillende_lengtes:
-               self.__verschillende_lengtes[lengte] = 1
-           else:
-               self.__verschillende_lengtes[lengte] += 1
+            lengte = int(gene[4]) - int(gene[3])
+            if lengte <= 1000:
+                self.__lengtes_y[0] += 1
+            elif lengte <= 2000 and lengte >= 1000:
+                self.__lengtes_y[1] += 1
+            elif lengte <= 3000 and lengte >= 2000:
+                self.__lengtes_y[2] += 1
+            elif lengte <= 4000 and lengte >= 3000:
+                self.__lengtes_y[3] += 1
+            elif lengte <= 5000 and lengte >= 4000:
+                self.__lengtes_y[4] += 1
+            elif lengte <= 6000 and lengte >= 5000:
+                self.__lengtes_y[5] += 1
+            elif lengte <= 7000 and lengte >= 6000:
+                self.__lengtes_y[6] += 1
+            elif lengte <= 8000 and lengte >= 7000:
+                self.__lengtes_y[7] += 1
 
 
-    def maakGrafiek_lengte(self):
+    def maakgrafiek_lengte(self):
         """
-        Laat zien hoevaak elke lengte voor komt van de genen
+        Maakt de grafiek van verschillende types in de GUI
         """
-        scherm = Tk.Toplevel() # zorgt ervoor dat de tabel op een
-        # nieuw GUI scherm komt
-        scherm.title("verschillende lengtes van genen")
-        scrollbar = Tk.Scrollbar(scherm) # maakt een scroll bar
-        scrollbar.pack(side=Tk.RIGHT, fill = Tk.Y)
-        gegevens = Tk.Listbox(scherm, yscrollcommand = scrollbar.set
-                              ,width=20)
-        # voegt de gegevens toe aan de scroll bar
-        for k,v in self.__verschillende_lengtes.items():
-            zin = "lengte:", k ,"=", v, "x"
-            gegevens.insert(Tk.END, zin)
-        gegevens.pack(side=Tk.LEFT,fill=Tk.BOTH)
-        scrollbar.config(command=gegevens.yview)
-        # return knop
-        knop = Tk.Button(text="return", master=scherm,
-                         command=scherm.destroy)
-        knop.pack()
+        lengte_type = Tk.Toplevel()  # Zorgt ervoor dat de grafiek
+        # op een ander scherm komt
+
+        f = Figure(figsize=(10, 8), dpi=100)
+        ax = f.add_subplot(111)
+        width = .8
+        # maakt de grafiek
+        rects1 = ax.bar(self.__lengtes_x, self.__lengtes_y, width)
+        figuur = FigureCanvasTkAgg(f, master=lengte_type)
+        figuur.draw()
+        figuur.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
+        quit_button = Tk.Button(heigh=2, width=10, text="return",
+                                command=lengte_type.destroy,
+                                master=lengte_type)
+        quit_button.pack()
 
 
-    def tabelPatronen(self):
+    def tabelpatronen(self):
         """
         maakt de tabel aan met de gevonden patronen
         """
@@ -459,7 +475,7 @@ class Gui_maken():
         knop.grid()
 
 
-    def Grafiek_type(self):
+    def grafiek_type(self):
         """
         Maakt de grafiek van verschillende types in de GUI
         """
@@ -485,7 +501,7 @@ class Gui_maken():
         quit_button.pack()
 
 
-    def grafiekHypotheticalProteins(self):
+    def grafiek_hypotheticalproteins(self):
         """
         Maakt de grafiek van hypothetical proteins
         """
@@ -507,7 +523,7 @@ class Gui_maken():
         quit_button.pack()
 
 
-    def maakGrafiekStrands(self):
+    def maakgrafiekstrands(self):
         """
         Maakt de grafiek met de hoeveelheid +/- strands
         """
@@ -540,7 +556,7 @@ class Gui_maken():
         quit_button.pack()
 
 
-    def maakGrafiekPercentage(self):
+    def maakgrafiekpercentage(self):
         """
         Maakt de grafiek van GC en AT %
         """
@@ -579,13 +595,13 @@ class Patronen():
         self.__gff_cds = cds
         self.__gffb_cds = gffb_cds
         self.__gffb_gene = gffb_gene
-        self.vindPatronen()
-        self.vindProtein_id()
-        self.vindProduct()
-        self.vindStrand()
+        self.vindpatronen()
+        self.vindprotein_id()
+        self.vindproduct()
+        self.vindstrand()
 
 
-    def vindPatronen(self):
+    def vindpatronen(self):
         """
         zoekt naar de patronen en zet ze in een 2d lijst
         """
@@ -617,35 +633,35 @@ class Patronen():
                 aantal += 1
 
 
-    def vindProtein_id(self):
+    def vindprotein_id(self):
         """
         Zoekt bij alle gevonden patronen de correcte protein_id
         """
         for patroon in self.__gevonden_patronen:
             value = self.__gffb_cds[patroon[0]]  # kijkt naar de id van de
             # gevonden patroon en zoekt op dat id in de dic. CDS
-            for i in value:
-                x = bool(re.search("/protein_id=",i))
+            for gegeven in value:
+                x = bool(re.search("/protein_id=",gegeven))
                 if x == True:
-                    i = i.replace("/protein_id=", "")
-                    patroon.append(i)
+                    gegeven = gegeven.replace("/protein_id=", "")
+                    patroon.append(gegeven)
 
 
-    def vindProduct(self):
+    def vindproduct(self):
         """
         zoekt naar het product voor de gevonden patronen
         """
         for patroon in self.__gevonden_patronen:
             value = self.__gffb_cds[patroon[0]]  # kijkt naar de id van de
             # gevonden patroon en zoekt op dat id in de dic. CDS
-            for i in value:
-                x = bool(re.search("/product=", i))
+            for gegeven in value:
+                x = bool(re.search("/product=", gegeven))
                 if x == True:
-                    i = i.replace("/product=", "")
-                    patroon.append(i)
+                    gegeven = gegeven.replace("/product=", "")
+                    patroon.append(gegeven)
 
 
-    def vindStrand(self):
+    def vindstrand(self):
         """
         Zoekt naar de strand die hoort bij de gevonden patronen
         """
@@ -656,7 +672,7 @@ class Patronen():
             patroon.append(strand)
 
 
-    def getPatronen(self):
+    def getpatronen(self):
         """
 
         :return: self.__gevonden_patronen - 2d lijst met alle gevonden patronen
@@ -678,11 +694,11 @@ def sequentie_uit_bestand3(bestandnaam):
     bestand = open(bestandnaam.name, "r")
     sequentie = ""
     for regel in bestand:
-        for index in regel:
-            if index == "a" or index == "t" or index == "c" \
-                    or index == "g":  # als de index een nucleotide is wordt
+        for basispaar in regel:
+            if basispaar == "a" or basispaar == "t" or basispaar == "c" \
+                    or basispaar == "g":  # als de index een nucleotide is wordt
                 # het toegevoegt aan de sequentie
-                sequentie += index
+                sequentie += basispaar
     bestand.close()
     return sequentie
 
@@ -693,15 +709,15 @@ def main():
 
     gff = Gff_bestand(bestandsnaam_gff)
     gff_cds, gff_gene, gff_trna, ggf_exon, gff_anders, \
-    gff_totale_inhoud = gff.getLijsten()
+    gff_totale_inhoud = gff.getlijsten()
 
     gffb = Gffb_bestand(bestandsnaam_gbff)
     gffb_gene, gffb_cds, gffb_rrna = gffb.getdiconaries()
-    sequentie_bestand = gffb.getSequentie()
+    sequentie_bestand = gffb.getsequentie()
     sequentie = sequentie_uit_bestand3(sequentie_bestand)
 
     p = Patronen(gff_cds, gffb_gene, gffb_cds)
-    patronen = p.getPatronen()
+    patronen = p.getpatronen()
 
     g = Gui_maken(patronen, gff_totale_inhoud, gffb_cds, sequentie,
                   gff_gene)
